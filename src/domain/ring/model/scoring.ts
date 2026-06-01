@@ -164,7 +164,10 @@ export function calculatePublishedScore(
   if (configuredJudgeCount >= 5) {
     const ranked = summaries
       .map((summary, index) => ({ summary, index }))
-      .sort((left, right) => left.summary.total - right.summary.total || left.index - right.index);
+      .sort(
+        (left, right) =>
+          left.summary.total - right.summary.total || left.index - right.index
+      );
 
     const droppedIndexes = new Set([
       ranked[0]?.index,

@@ -2,8 +2,8 @@ import {
   formatScore,
   getJudgeTotal,
   type JudgeActionDefinition
-} from "../lib/scoring";
-import type { JudgeRecord } from "../lib/schemas";
+} from "../../../domain/ring/model/scoring";
+import type { JudgeRecord } from "../../../domain/ring/model/schemas";
 
 interface JudgePanelProps {
   judge: JudgeRecord;
@@ -30,7 +30,9 @@ export function JudgePanel({
           onClick={() => onFocus(judge.id)}
           type="button"
         >
-          <span className={`connection-dot${judge.connected ? " online" : " offline"}`} />
+          <span
+            className={`connection-dot${judge.connected ? " online" : " offline"}`}
+          />
           <strong>{judge.name}</strong>
         </button>
 

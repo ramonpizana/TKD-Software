@@ -9,7 +9,9 @@ import {
 describe("scoring engine", () => {
   it("clamps technical and presentation scores at zero", () => {
     const judge = createJudgeRecord("J1", "Judge 1");
-    const majorTechnical = judgeActionCatalog.find((action) => action.id === "tech-major");
+    const majorTechnical = judgeActionCatalog.find(
+      (action) => action.id === "tech-major"
+    );
     const majorPresentation = judgeActionCatalog.find(
       (action) => action.id === "presentation-major"
     );
@@ -66,3 +68,4 @@ describe("scoring engine", () => {
     expect(result.finalScore).toBe(9.8);
   });
 });
+

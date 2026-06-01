@@ -1,5 +1,5 @@
-import { createJudgeRecord } from "../lib/scoring";
-import type { RingSnapshot } from "../lib/schemas";
+import { createJudgeRecord } from "../../ring/model/scoring";
+import type { RingSnapshot } from "../../ring/model/schemas";
 
 export const demoSnapshot: RingSnapshot = {
   meta: {

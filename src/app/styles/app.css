@@ -76,6 +76,10 @@
   box-shadow: 0 0 0.9rem rgba(126, 215, 166, 0.52);
 }
 
+.status-led.offline {
+  background: var(--muted);
+}
+
 .connection-dot.offline {
   background: var(--danger);
 }
@@ -430,4 +434,3 @@
     flex-direction: column;
   }
 }
-
