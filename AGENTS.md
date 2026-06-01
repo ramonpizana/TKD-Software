@@ -30,3 +30,8 @@ de taekwondo poomsae que sea rapido, entendible y resiliente ante fallas de red.
 - UI clara aun bajo presion de torneo
 - documentacion al dia cuando cambie arquitectura o despliegue
 
+<!-- SPECKIT START -->
+## Feature activo
+
+- plan actual: `specs/002-desktop-shell-foundation/plan.md`
+<!-- SPECKIT END -->

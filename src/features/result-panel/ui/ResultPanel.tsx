@@ -1,5 +1,11 @@
-import { formatScore, type PublishedScore } from "../lib/scoring";
-import type { Athlete, JudgeRecord } from "../lib/schemas";
+import {
+  formatScore,
+  type PublishedScore
+} from "../../../domain/ring/model/scoring";
+import type {
+  Athlete,
+  JudgeRecord
+} from "../../../domain/ring/model/schemas";
 
 interface ResultPanelProps {
   athlete: Athlete | undefined;
@@ -26,7 +32,7 @@ export function ResultPanel({
         </div>
         <p>
           {athlete
-            ? `${athlete.name} · ${athlete.poomsae}`
+            ? `${athlete.name} - ${athlete.poomsae}`
             : "Selecciona un atleta para comenzar"}
         </p>
       </div>
@@ -37,11 +43,14 @@ export function ResultPanel({
           const isDropped = result.droppedJudgeIds.includes(judgeSummary.id);
 
           return (
-            <div key={judgeSummary.id} className={`result-row${isDropped ? " is-dropped" : ""}`}>
+            <div
+              key={judgeSummary.id}
+              className={`result-row${isDropped ? " is-dropped" : ""}`}
+            >
               <div>
                 <strong>{judgeSummary.name}</strong>
                 <small>
-                  {judge?.connected ? "Conectado" : "Fuera de linea"} ·{" "}
+                  {judge?.connected ? "Conectado" : "Fuera de linea"} -{" "}
                   {judgeSummary.deductions} eventos
                 </small>
               </div>
@@ -66,4 +75,3 @@ export function ResultPanel({
     </section>
   );
 }
-

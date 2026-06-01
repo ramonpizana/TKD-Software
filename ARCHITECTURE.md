@@ -31,12 +31,14 @@ quedar registrada con timestamp y origen.
 Hoy el repo incluye:
 
 - un prototipo de consola del operador en `React + TypeScript + Vite`
-- un motor de scoring desacoplado en `src/lib/scoring.ts`
+- un scaffold inicial de `Tauri` para volver el host instalable en Windows
+- un motor de scoring desacoplado en `src/domain/ring/model/scoring.ts`
 - persistencia local en navegador
 - una especificacion `speckit` para la fase fundacional
 
 Esto permite validar el flujo de competencia sin comprometer aun la arquitectura
-productiva final.
+productiva final. La fase actual empieza a tender el puente hacia un host de
+escritorio real, sin mover todavia la verdad del ring a servicios remotos.
 
 ## Arquitectura objetivo por fases
 
@@ -106,13 +108,18 @@ conectividad segura.
 - reinicio del equipo durante una categoria
 - necesidad de operar varios rings a la vez
 
-## Recomendacion de stack para la siguiente etapa
+## Recomendacion de lenguaje y stack
 
-- `Electron` o `Tauri` para el host local del ring
+- `TypeScript` estricto para el dominio compartido, UI operativa y tooling
+- `Tauri + Rust` como opcion preferida para el host local del ring
 - `SQLite` o equivalente embebido para almacenamiento transaccional local
 - `WebSocket` para remotos y pantalla en tiempo real
 - `Cloudflare Durable Objects + D1` como opcion fuerte para sincronizacion y
   coordinacion remota posterior, no como dependencia del ring
+
+`Electron` sigue siendo una alternativa valida, pero no es la recomendacion
+principal para este proyecto mientras buscamos un host mas ligero y una ruta mas
+clara a componentes locales criticos fuera del renderer.
 
 ## Skills y herramientas sugeridas
 
@@ -122,4 +129,3 @@ conectividad segura.
 - `CodeRabbit` para revisiones de riesgo
 - `Cloudflare` cuando pasemos a despliegue y sincronizacion
 - `design-taste-frontend` para pantallas visibles al operador y al publico
-

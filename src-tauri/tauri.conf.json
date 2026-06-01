@@ -1,0 +1,32 @@
+{
+  "productName": "TKD-Software",
+  "version": "0.1.0",
+  "identifier": "com.ramonpizana.tkdsoftware",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "height": 980,
+        "label": "main",
+        "minHeight": 760,
+        "minWidth": 1280,
+        "resizable": true,
+        "title": "TKD-Software",
+        "width": 1600
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "nsis"
+  },
+  "plugins": {}
+}

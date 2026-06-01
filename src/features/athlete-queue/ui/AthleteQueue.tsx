@@ -1,4 +1,4 @@
-import type { Athlete } from "../lib/schemas";
+import type { Athlete } from "../../../domain/ring/model/schemas";
 
 interface AthleteQueueProps {
   athletes: Athlete[];

@@ -16,21 +16,44 @@ const requiredFiles = [
   "ARCHITECTURE.md",
   "README.md",
   "SECURITY.md",
+  "docs/desktop/windows-setup.md",
+  "docs/adr/001-language-and-runtime-strategy.md",
   "eslint.config.mjs",
   "index.html",
   "package.json",
+  "scripts/check-desktop-prereqs.mjs",
   "scripts/validate-repo.mjs",
+  "src/app/runtime/useDesktopRuntimeInfo.ts",
+  "src/app/styles/app.css",
+  "src/domain/ring/model/persistence.ts",
+  "src/domain/ring/model/ring-state.ts",
+  "src/domain/ring/model/scoring.test.ts",
+  "src/domain/ring/model/scoring.ts",
+  "src/pages/ring-control/model/useRingControl.ts",
+  "src/pages/ring-control/ui/RingControlPage.tsx",
   "src/App.tsx",
-  "src/lib/scoring.test.ts",
-  "src/lib/scoring.ts",
   "src/main.tsx",
+  "src-tauri/Cargo.toml",
+  "src-tauri/build.rs",
+  "src-tauri/tauri.conf.json",
+  "src-tauri/capabilities/default.json",
+  "src-tauri/src/lib.rs",
+  "src-tauri/src/main.rs",
   "tsconfig.json",
   "vite.config.ts",
   "vitest.config.ts",
   "specs/001-ring-scoring-foundation/spec.md",
   "specs/001-ring-scoring-foundation/plan.md",
   "specs/001-ring-scoring-foundation/tasks.md",
-  "specs/001-ring-scoring-foundation/checklists/requirements.md"
+  "specs/001-ring-scoring-foundation/checklists/requirements.md",
+  "specs/002-desktop-shell-foundation/spec.md",
+  "specs/002-desktop-shell-foundation/plan.md",
+  "specs/002-desktop-shell-foundation/research.md",
+  "specs/002-desktop-shell-foundation/data-model.md",
+  "specs/002-desktop-shell-foundation/quickstart.md",
+  "specs/002-desktop-shell-foundation/contracts/desktop-shell-contract.md",
+  "specs/002-desktop-shell-foundation/tasks.md",
+  "specs/002-desktop-shell-foundation/checklists/requirements.md"
 ];
 
 const textExtensions = new Set([
@@ -139,7 +162,16 @@ function inspectTextFile(fullPath) {
 
 function validatePackageScripts() {
   const packageJson = JSON.parse(readFileSync(path.join(rootDir, "package.json"), "utf8"));
-  const requiredScripts = ["build", "lint", "test", "typecheck", "validate"];
+  const requiredScripts = [
+    "build",
+    "desktop:build",
+    "desktop:dev",
+    "desktop:doctor",
+    "lint",
+    "test",
+    "typecheck",
+    "validate"
+  ];
 
   for (const scriptName of requiredScripts) {
     if (!packageJson.scripts?.[scriptName]) {
@@ -179,7 +211,12 @@ function validateTrackedFiles() {
 }
 
 function validateFileSizes() {
-  for (const filePath of ["README.md", "src/App.tsx", "src/lib/scoring.ts"]) {
+  for (const filePath of [
+    "README.md",
+    "src/App.tsx",
+    "src/domain/ring/model/scoring.ts",
+    "src/pages/ring-control/ui/RingControlPage.tsx"
+  ]) {
     const absolutePath = path.join(rootDir, filePath);
     const stats = statSync(absolutePath);
 
@@ -215,4 +252,3 @@ if (errors.length > 0) {
 }
 
 console.log("Repository validation passed.");
-
