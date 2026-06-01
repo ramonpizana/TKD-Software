@@ -1,0 +1,41 @@
+{
+  "name": "tkd-software",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "clean:dist": "node scripts/clean-dist.mjs",
+    "prepare:runtime": "node scripts/prepare-runtime.mjs",
+    "dev": "npm run prepare:runtime && node ./node_modules/vite/bin/vite.js --configLoader runner",
+    "build": "node scripts/build.mjs",
+    "preview": "npm run prepare:runtime && node ./node_modules/vite/bin/vite.js preview --configLoader runner",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run prepare:runtime && node ./node_modules/vitest/vitest.mjs run --configLoader runner",
+    "test:watch": "npm run prepare:runtime && node ./node_modules/vitest/vitest.mjs --configLoader runner",
+    "validate": "node scripts/validate-pipeline.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.4.0",
+    "jsdom": "^27.0.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3",
+    "vite": "^7.2.2",
+    "vitest": "^4.0.8"
+  }
+}
