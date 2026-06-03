@@ -1,5 +1,5 @@
 import { useDesktopRuntimeInfo } from "../../../app/runtime/useDesktopRuntimeInfo";
-import { AthleteQueue } from "../../../features/athlete-queue/ui/AthleteQueue";
+import { EventWorkspacePanel } from "../../../features/event-workspace/ui/EventWorkspacePanel";
 import { JudgePanel } from "../../../features/judge-panel/ui/JudgePanel";
 import { ResultPanel } from "../../../features/result-panel/ui/ResultPanel";
 import { useRingControl } from "../model/useRingControl";
@@ -8,15 +8,25 @@ export function RingControlPage() {
   const runtime = useDesktopRuntimeInfo();
   const {
     activeAthlete,
+    activeResult,
+    addAthlete,
     applyAction,
+    createEvent,
+    eventSummaries,
     focusJudge,
     judgeActions,
     nextAthlete,
     publishedScore,
+    removeAthlete,
     resetRound,
+    saveResult,
+    saveResultAndAdvance,
     selectAthlete,
+    selectEvent,
     snapshot,
-    toggleConnection
+    standings,
+    toggleConnection,
+    updateEventMeta
   } = useRingControl();
 
   return (
@@ -43,14 +53,27 @@ export function RingControlPage() {
             <span>{snapshot.meta.ringName}</span>
             <strong>{snapshot.meta.eventName}</strong>
           </div>
+          <div className="status-pill">
+            <span>{snapshot.meta.roundName}</span>
+            <strong>{snapshot.meta.categoryLabel}</strong>
+          </div>
         </div>
       </header>
 
       <main className="main-grid">
-        <AthleteQueue
+        <EventWorkspacePanel
           activeAthleteId={snapshot.activeAthleteId}
+          activeEventId={snapshot.eventId}
           athletes={snapshot.athletes}
-          onSelect={selectAthlete}
+          eventSummaries={eventSummaries}
+          meta={snapshot.meta}
+          onAddAthlete={addAthlete}
+          onCreateEvent={createEvent}
+          onRemoveAthlete={removeAthlete}
+          onSelectAthlete={selectAthlete}
+          onSelectEvent={selectEvent}
+          onUpdateMeta={updateEventMeta}
+          results={snapshot.results}
         />
 
         <section className="stage-panel">
@@ -59,12 +82,15 @@ export function RingControlPage() {
               <span className="eyebrow">Atleta en pantalla</span>
               <h2>{activeAthlete?.name ?? "Sin atleta"}</h2>
               <p>
-                {activeAthlete?.division} - {activeAthlete?.category}
+                {activeAthlete
+                  ? `${activeAthlete.division} - ${activeAthlete.category}`
+                  : `${snapshot.meta.branch} - ${snapshot.meta.categoryLabel}`}
               </p>
               <div className="athlete-meta">
-                <span>{activeAthlete?.club}</span>
-                <span>{activeAthlete?.poomsae}</span>
-                <span>{activeAthlete?.ageBand}</span>
+                <span>{activeAthlete?.club ?? snapshot.meta.venue}</span>
+                <span>{activeAthlete?.poomsae ?? snapshot.meta.modality}</span>
+                <span>{activeAthlete?.ageBand ?? snapshot.meta.roundName}</span>
+                {activeAthlete?.seed ? <span>Seed {activeAthlete.seed}</span> : null}
               </div>
             </div>
 
@@ -108,13 +134,17 @@ export function RingControlPage() {
         <ResultPanel
           athlete={activeAthlete}
           judges={snapshot.judges}
+          onSaveResult={saveResult}
+          onSaveResultAndAdvance={saveResultAndAdvance}
           result={publishedScore}
+          savedResult={activeResult}
+          standings={standings}
         />
       </main>
 
       <footer className="footer-strip">
         <span>Judge focus: {snapshot.focusedJudgeId}</span>
-        <span>Atajos: flechas aplican deducciones, `R` reinicia, `N` avanza.</span>
+        <span>Atajos: flechas aplican deducciones, `R` reinicia, `N` avanza, `S` guarda y sigue.</span>
         <span>
           Runtime: {runtime.shell}
           {runtime.appVersion ? ` ${runtime.appVersion}` : ""}

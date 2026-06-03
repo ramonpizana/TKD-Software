@@ -4,19 +4,29 @@ import {
 } from "../../../domain/ring/model/scoring";
 import type {
   Athlete,
-  JudgeRecord
+  JudgeRecord,
+  SavedResult
 } from "../../../domain/ring/model/schemas";
+import type { StandingRow } from "../../../domain/tournament/model/workspace-state";
 
 interface ResultPanelProps {
   athlete: Athlete | undefined;
   judges: JudgeRecord[];
   result: PublishedScore;
+  savedResult: SavedResult | undefined;
+  standings: StandingRow[];
+  onSaveResult: () => void;
+  onSaveResultAndAdvance: () => void;
 }
 
 export function ResultPanel({
   athlete,
   judges,
-  result
+  result,
+  savedResult,
+  standings,
+  onSaveResult,
+  onSaveResultAndAdvance
 }: ResultPanelProps) {
   return (
     <section className="panel panel-scroll">
@@ -35,6 +45,29 @@ export function ResultPanel({
             ? `${athlete.name} - ${athlete.poomsae}`
             : "Selecciona un atleta para comenzar"}
         </p>
+        <div className="result-hero-actions">
+          <button
+            className="ghost-button"
+            disabled={!athlete}
+            onClick={onSaveResult}
+            type="button"
+          >
+            Guardar resultado
+          </button>
+          <button
+            className="primary-button"
+            disabled={!athlete}
+            onClick={onSaveResultAndAdvance}
+            type="button"
+          >
+            Guardar y siguiente
+          </button>
+        </div>
+        <small className="result-save-note">
+          {savedResult
+            ? `Resultado guardado: ${new Date(savedResult.savedAt).toLocaleTimeString("es-MX")}`
+            : "Aun no se guarda un resultado oficial para este atleta."}
+        </small>
       </div>
 
       <div className="result-table">
@@ -71,6 +104,41 @@ export function ResultPanel({
             ? `Se descartaron ${result.droppedJudgeIds.join(", ")}.`
             : "No hubo descarte automatico en esta configuracion."}
         </span>
+      </div>
+
+      <div className="subsection-heading standings-heading">
+        <div>
+          <span className="eyebrow">Clasificacion</span>
+          <h3>Posiciones guardadas</h3>
+        </div>
+        <span>{standings.length} resultados</span>
+      </div>
+
+      <div className="standings-table">
+        {standings.length === 0 ? (
+          <div className="empty-state">
+            Cuando guardes resultados apareceran aqui las posiciones del evento.
+          </div>
+        ) : (
+          standings.map((entry, index) => (
+            <div key={entry.id} className="standings-row">
+              <div>
+                <strong>
+                  {index + 1}. {entry.athleteName}
+                </strong>
+                <small>
+                  {entry.poomsae}
+                  {entry.club ? ` · ${entry.club}` : ""}
+                </small>
+              </div>
+
+              <div className="standings-side">
+                {entry.seed ? <span className="seed-badge">Seed {entry.seed}</span> : null}
+                <strong>{formatScore(entry.finalScore)}</strong>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </section>
   );

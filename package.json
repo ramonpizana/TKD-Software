@@ -18,9 +18,9 @@
     "test:watch": "npm run prepare:runtime && node ./node_modules/vitest/vitest.mjs --configLoader runner",
     "validate": "node scripts/validate-pipeline.mjs",
     "desktop:doctor": "node scripts/check-desktop-prereqs.mjs",
-    "desktop:dev": "npm run desktop:doctor && node ./node_modules/@tauri-apps/cli/tauri.js dev",
-    "desktop:build": "npm run desktop:doctor && node ./node_modules/@tauri-apps/cli/tauri.js build",
-    "tauri": "node ./node_modules/@tauri-apps/cli/tauri.js"
+    "desktop:dev": "npm run desktop:doctor && node scripts/run-tauri.mjs dev",
+    "desktop:build": "npm run desktop:doctor && node scripts/run-tauri.mjs build",
+    "tauri": "node scripts/run-tauri.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.11.0",

@@ -34,7 +34,8 @@ Hoy el repo incluye:
 - un scaffold inicial de `Tauri` para volver el host instalable en Windows
 - un motor de scoring desacoplado en `src/domain/ring/model/scoring.ts`
 - persistencia local en navegador
-- una especificacion `speckit` para la fase fundacional
+- un workspace de eventos locales con roster y resultados guardados
+- especificaciones `speckit` para scoring, shell desktop y operacion de evento
 
 Esto permite validar el flujo de competencia sin comprometer aun la arquitectura
 productiva final. La fase actual empieza a tender el puente hacia un host de
@@ -45,8 +46,10 @@ escritorio real, sin mover todavia la verdad del ring a servicios remotos.
 ### Fase 1. Consola local del ring
 
 - UI del operador
-- cola de atletas
+- evento local con roster y configuracion propia
 - puntuacion de jueces
+- resultados guardados por atleta
+- tabla de posiciones del evento
 - pantalla de resultados embebida
 - soporte de teclado como fallback
 

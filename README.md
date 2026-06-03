@@ -11,6 +11,9 @@ internet del recinto.
 - constitucion del repositorio con gates de calidad y seguridad
 - prototipo funcional de scoring en `React + TypeScript + Vite`
 - scaffold de `Tauri` para evolucionar a app de escritorio instalable
+- workspace local de eventos con multiples brackets y eventos activos
+- registro de atletas con datos competitivos, siembra y ranking opcional
+- guardado persistente de resultados por atleta y tabla de posiciones
 - motor de puntuacion probado con reglas de descarte y deducciones
 - persistencia local para modo offline
 - CI con validacion, CodeQL y escaneo de secretos
@@ -52,6 +55,7 @@ Hoy la pantalla principal vive en:
 - [src/pages/ring-control/ui/RingControlPage.tsx](/C:/Users/ramon/Documents/TKD/src/pages/ring-control/ui/RingControlPage.tsx)
 - [src/pages/ring-control/model/useRingControl.ts](/C:/Users/ramon/Documents/TKD/src/pages/ring-control/model/useRingControl.ts)
 - [src/domain/ring/model/scoring.ts](/C:/Users/ramon/Documents/TKD/src/domain/ring/model/scoring.ts)
+- [src/domain/tournament/model/workspace-state.ts](/C:/Users/ramon/Documents/TKD/src/domain/tournament/model/workspace-state.ts)
 
 ## Direccion tecnica
 
@@ -79,6 +83,25 @@ Luego abre:
 
 Se fija `127.0.0.1` en la configuracion de Vite para evitar problemas de
 resolucion con `localhost` e IPv6 en Windows y en navegadores embebidos.
+
+Flujo actual recomendado:
+
+1. crea o selecciona un evento local
+2. configura sede, ring, ronda, categoria y jueces
+3. registra atletas antes del inicio
+4. selecciona el atleta activo
+5. aplica deducciones por juez
+6. guarda el resultado y revisa posiciones
+
+Atajos:
+
+- `ArrowUp`: tecnica `-0.3`
+- `ArrowDown`: tecnica `-0.1`
+- `ArrowRight`: presentacion `-0.3`
+- `ArrowLeft`: presentacion `-0.1`
+- `R`: reinicia el round actual
+- `N`: avanza al siguiente atleta
+- `S`: guarda el resultado actual y avanza
 
 ## Modo escritorio
 
@@ -121,6 +144,7 @@ npm run desktop:build
 
 - fundacion del scoring: [specs/001-ring-scoring-foundation/spec.md](/C:/Users/ramon/Documents/TKD/specs/001-ring-scoring-foundation/spec.md)
 - fase de escritorio: [specs/002-desktop-shell-foundation/plan.md](/C:/Users/ramon/Documents/TKD/specs/002-desktop-shell-foundation/plan.md)
+- fase de operacion de evento: [specs/003-event-ops/plan.md](/C:/Users/ramon/Documents/TKD/specs/003-event-ops/plan.md)
 
 ## Cuentas recomendadas
 
@@ -134,9 +158,8 @@ Cuando pasemos a despliegue real, las cuentas que conviene preparar son:
 
 ## Estado actual
 
-La base actual ya cubre el flujo central del scoring y la calidad del repo.
-Bluetooth, pairing de remotos, pantalla externa separada, sincronizacion con
-registro oficial de atletas y despliegue productivo quedan descritos como
-siguientes fases. El shell de escritorio ya esta preparado a nivel de
-estructura, pero en esta maquina aun falta instalar el toolchain de Rust para
-ejecutarlo completo.
+La base actual ya cubre el scoring del ring, el registro manual previo de
+atletas, la gestion local de eventos y el guardado de resultados con tabla de
+posiciones. La siguiente ola natural es meter draws o ramas eliminatorias,
+importacion masiva de atletas, sincronizacion entre rings y persistencia local
+de escritorio mas fuerte sobre SQLite dentro de Tauri.
