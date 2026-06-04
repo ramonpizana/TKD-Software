@@ -37,7 +37,7 @@ export function AthleteQueue({
                   <strong>{athlete.name}</strong>
                 </div>
                 <small>
-                  {athlete.division} · {athlete.poomsae}
+                  {athlete.division} - {athlete.poomsae}
                 </small>
               </button>
             );
@@ -46,4 +46,3 @@ export function AthleteQueue({
     </section>
   );
 }
-

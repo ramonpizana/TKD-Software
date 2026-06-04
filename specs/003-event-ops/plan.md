@@ -8,9 +8,10 @@
 
 Expandir el prototipo de ring hacia un workspace de evento local-first que
 permita crear multiples brackets, registrar atletas, guardar resultados
-auditables y mostrar posiciones dentro de la misma app. La primera entrega se
-mantendra en el frontend actual con persistencia local, dejando el camino listo
-para migrar el storage autoritativo a SQLite en el shell de escritorio.
+auditables y mostrar posiciones dentro de la misma app. Esta iteracion tambien
+organiza la experiencia en una portada operativa y vistas separadas para
+configuracion, jueceo y seguimiento del evento, dejando el camino listo para
+migrar el storage autoritativo a SQLite en el shell de escritorio.
 
 ## Technical Context
 
@@ -62,6 +63,7 @@ specs/003-event-ops/
 ```text
 src/
 |-- app/
+|   `-- styles/
 |-- domain/
 |   |-- ring/model/
 |   `-- tournament/
@@ -69,20 +71,25 @@ src/
 |       `-- model/
 |-- features/
 |   |-- athlete-queue/
+|   |-- event-results/
 |   |-- event-workspace/
+|   |-- judging-workspace/
 |   |-- judge-panel/
-|   `-- result-panel/
+|   |-- product-home/
+|   |-- result-panel/
+|   `-- workspace-tabs/
 `-- pages/
     `-- ring-control/
 
-scripts/
-`-- *.mjs
+docs/
+`-- desktop/
+    `-- sqlite-tauri.md
 ```
 
 **Structure Decision**: Se mantiene el proyecto como una sola aplicacion de
-frontend orientada a desktop, agregando el nuevo estado de evento en
-`src/domain/tournament/model/` y componentes operativos nuevos bajo
-`src/features/`.
+frontend orientada a desktop, agregando estado de evento en
+`src/domain/tournament/model/`, vistas separadas de operacion en `src/features/`
+y una guia de transicion a SQLite para el host de escritorio.
 
 ## Complexity Tracking
 

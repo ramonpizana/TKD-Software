@@ -31,6 +31,7 @@ quedar registrada con timestamp y origen.
 Hoy el repo incluye:
 
 - un prototipo de consola del operador en `React + TypeScript + Vite`
+- una shell operativa separada en vistas de inicio, configuracion, jueceo y seguimiento
 - un scaffold inicial de `Tauri` para volver el host instalable en Windows
 - un motor de scoring desacoplado en `src/domain/ring/model/scoring.ts`
 - persistencia local en navegador

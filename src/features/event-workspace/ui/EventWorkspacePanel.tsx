@@ -88,10 +88,10 @@ export function EventWorkspacePanel({
             >
               <strong>{event.eventName}</strong>
               <small>
-                {event.roundName} · {event.categoryLabel}
+                {event.roundName} - {event.categoryLabel}
               </small>
               <span>
-                {event.athleteCount} atletas · {event.resultCount} resultados
+                {event.athleteCount} atletas - {event.resultCount} resultados
               </span>
             </button>
           );
@@ -246,11 +246,11 @@ export function EventWorkspacePanel({
                       <strong>{athlete.name}</strong>
                     </div>
                     <small>
-                      {athlete.division} · {athlete.poomsae}
+                      {athlete.division} - {athlete.poomsae}
                     </small>
                     <small>
                       {athlete.club}
-                      {athlete.state ? ` · ${athlete.state}` : ""}
+                      {athlete.state ? ` - ${athlete.state}` : ""}
                     </small>
                   </button>
 

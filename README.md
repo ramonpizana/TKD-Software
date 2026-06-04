@@ -14,6 +14,7 @@ internet del recinto.
 - workspace local de eventos con multiples brackets y eventos activos
 - registro de atletas con datos competitivos, siembra y ranking opcional
 - guardado persistente de resultados por atleta y tabla de posiciones
+- navegacion separada para inicio, creacion de evento, jueceo y seguimiento del evento
 - motor de puntuacion probado con reglas de descarte y deducciones
 - persistencia local para modo offline
 - CI con validacion, CodeQL y escaneo de secretos
@@ -86,12 +87,11 @@ resolucion con `localhost` e IPv6 en Windows y en navegadores embebidos.
 
 Flujo actual recomendado:
 
-1. crea o selecciona un evento local
-2. configura sede, ring, ronda, categoria y jueces
+1. abre `Inicio` para entender el flujo del operador
+2. entra a `Crear evento` y configura sede, ring, ronda, categoria y jueces
 3. registra atletas antes del inicio
-4. selecciona el atleta activo
-5. aplica deducciones por juez
-6. guarda el resultado y revisa posiciones
+4. cambia a `Jueceo` para seleccionar el atleta activo y puntuar
+5. usa `Evento` para revisar guardados, posiciones y avance de la ronda
 
 Atajos:
 
@@ -110,6 +110,8 @@ de escritorio Windows.
 
 Antes de usarlo, revisa
 [docs/desktop/windows-setup.md](/C:/Users/ramon/Documents/TKD/docs/desktop/windows-setup.md)
+y la ruta de persistencia local en
+[docs/desktop/sqlite-tauri.md](/C:/Users/ramon/Documents/TKD/docs/desktop/sqlite-tauri.md)
 y ejecuta:
 
 ```bash

@@ -88,6 +88,36 @@ no mezcla listas ni scores.
 
 ---
 
+### User Story 4 - Navegar la operacion por secciones claras (Priority: P2)
+
+Como operador bajo presion de torneo, quiero una portada clara y vistas
+separadas para configuracion, jueceo y seguimiento del evento para no mezclar
+tareas previas con acciones criticas del ring.
+
+**Why this priority**: El flujo tecnico ya existe, pero si todo vive en una sola
+pantalla aumenta la carga cognitiva y el riesgo de error operativo.
+
+**Independent Test**: Puede probarse entrando a cada pestana, verificando que
+cada una explica para que sirve y que sus tablas y acciones quedan visibles sin
+textos encimados.
+
+**Acceptance Scenarios**:
+
+1. **Given** que el operador abre la app, **When** entra a la portada,
+   **Then** entiende para que sirve el software y cual es el flujo general
+   antes de empezar a capturar datos.
+2. **Given** que el operador necesita preparar el torneo, **When** entra a la
+   pestana de configuracion, **Then** puede editar el evento y registrar atletas
+   sin distraerse con los paneles de jueceo.
+3. **Given** que el operador esta calificando, **When** entra a la pestana de
+   jueceo, **Then** ve al atleta activo, la cola, los jueces y los controles de
+   guardado sin desbordes de texto.
+4. **Given** que el operador quiere revisar avance, **When** entra a la
+   pestana de evento, **Then** puede consultar resultados guardados y posiciones
+   del evento activo.
+
+---
+
 ### Edge Cases
 
 - Que ocurre si se crea un evento nuevo sin atletas y aun asi se entra al ring.
@@ -98,6 +128,8 @@ no mezcla listas ni scores.
   o siembra parcial y otros sin ranking.
 - Como se evita mezclar resultados de una categoria con otra cuando existen
   multiples eventos cargados localmente.
+- Como se mantiene clara la UI cuando el operador usa nombres largos de evento,
+  categorias largas o clubes extensos.
 
 ## Requirements *(mandatory)*
 
@@ -124,8 +156,14 @@ no mezcla listas ni scores.
 - **FR-009**: El sistema MUST permitir cambiar entre eventos sin perder el
   estado guardado de cada uno.
 - **FR-010**: El sistema SHOULD dejar preparado el modelo para evolucionar a
-  rondas eliminatorias, cortes, semifinales y finales sin rediseñar la base del
+  rondas eliminatorias, cortes, semifinales y finales sin redisenar la base del
   evento.
+- **FR-011**: El sistema MUST separar la operacion en vistas claras para inicio,
+  configuracion del evento, jueceo y seguimiento del evento.
+- **FR-012**: Cada vista principal MUST explicar su objetivo operativo antes de
+  mostrar controles o tablas.
+- **FR-013**: Los textos y tarjetas de la interfaz MUST mantenerse legibles
+  dentro de sus contenedores en desktop y mobile sin sobreposiciones visibles.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -150,6 +188,8 @@ no mezcla listas ni scores.
   posiciones en menos de 2 segundos despues de la accion de guardado.
 - **SC-004**: Un operador puede alternar entre dos eventos distintos sin mezclar
   atletas ni resultados en las vistas del ring.
+- **SC-005**: Un operador nuevo puede identificar en menos de 30 segundos
+  donde crear un evento, donde calificar y donde revisar resultados.
 
 ## Assumptions
 

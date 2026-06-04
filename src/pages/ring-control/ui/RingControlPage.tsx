@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { useDesktopRuntimeInfo } from "../../../app/runtime/useDesktopRuntimeInfo";
+import { EventResultsPanel } from "../../../features/event-results/ui/EventResultsPanel";
 import { EventWorkspacePanel } from "../../../features/event-workspace/ui/EventWorkspacePanel";
-import { JudgePanel } from "../../../features/judge-panel/ui/JudgePanel";
-import { ResultPanel } from "../../../features/result-panel/ui/ResultPanel";
+import { JudgingWorkspacePanel } from "../../../features/judging-workspace/ui/JudgingWorkspacePanel";
+import { ProductHomePanel } from "../../../features/product-home/ui/ProductHomePanel";
+import {
+  WorkspaceTabs,
+  type WorkspaceTabId
+} from "../../../features/workspace-tabs/ui/WorkspaceTabs";
 import { useRingControl } from "../model/useRingControl";
 
 export function RingControlPage() {
@@ -17,6 +23,7 @@ export function RingControlPage() {
     judgeActions,
     nextAthlete,
     publishedScore,
+    workspace,
     removeAthlete,
     resetRound,
     saveResult,
@@ -28,13 +35,26 @@ export function RingControlPage() {
     toggleConnection,
     updateEventMeta
   } = useRingControl();
+  const [activeTab, setActiveTab] = useState<WorkspaceTabId>("home");
+  const athleteCount = workspace.events.reduce(
+    (total, event) => total + event.athletes.length,
+    0
+  );
+  const resultCount = workspace.events.reduce(
+    (total, event) => total + event.results.length,
+    0
+  );
 
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div>
+        <div className="topbar-copy">
           <span className="eyebrow">TKD-Software</span>
-          <h1>Ring control para poomsae confiable</h1>
+          <h1>Scoring local-first para poomsae competitivo</h1>
+          <p>
+            Una consola pensada para crear eventos, conducir el jueceo y guardar
+            resultados sin depender del internet del recinto.
+          </p>
         </div>
 
         <div className="status-cluster">
@@ -60,86 +80,86 @@ export function RingControlPage() {
         </div>
       </header>
 
-      <main className="main-grid">
-        <EventWorkspacePanel
-          activeAthleteId={snapshot.activeAthleteId}
-          activeEventId={snapshot.eventId}
-          athletes={snapshot.athletes}
-          eventSummaries={eventSummaries}
-          meta={snapshot.meta}
-          onAddAthlete={addAthlete}
-          onCreateEvent={createEvent}
-          onRemoveAthlete={removeAthlete}
-          onSelectAthlete={selectAthlete}
-          onSelectEvent={selectEvent}
-          onUpdateMeta={updateEventMeta}
-          results={snapshot.results}
-        />
+      <main className="content-shell">
+        <WorkspaceTabs activeTab={activeTab} onSelectTab={setActiveTab} />
 
-        <section className="stage-panel">
-          <div className="stage-shell">
-            <div className="athlete-card">
-              <span className="eyebrow">Atleta en pantalla</span>
-              <h2>{activeAthlete?.name ?? "Sin atleta"}</h2>
-              <p>
-                {activeAthlete
-                  ? `${activeAthlete.division} - ${activeAthlete.category}`
-                  : `${snapshot.meta.branch} - ${snapshot.meta.categoryLabel}`}
-              </p>
-              <div className="athlete-meta">
-                <span>{activeAthlete?.club ?? snapshot.meta.venue}</span>
-                <span>{activeAthlete?.poomsae ?? snapshot.meta.modality}</span>
-                <span>{activeAthlete?.ageBand ?? snapshot.meta.roundName}</span>
-                {activeAthlete?.seed ? <span>Seed {activeAthlete.seed}</span> : null}
+        {activeTab === "home" ? (
+          <ProductHomePanel
+            athleteCount={athleteCount}
+            eventCount={eventSummaries.length}
+            meta={snapshot.meta}
+            resultCount={resultCount}
+          />
+        ) : null}
+
+        {activeTab === "setup" ? (
+          <section className="section-shell">
+            <div className="section-intro">
+              <div>
+                <span className="eyebrow">Pestana de configuracion</span>
+                <h2>Crear evento y cargar atletas</h2>
               </div>
-            </div>
-
-            <div className="scoreboard-card">
-              <span className="score-label">Promedio publicado</span>
-              <strong className="score-display">
-                {publishedScore.finalScore.toFixed(2)}
-              </strong>
               <p>
-                {snapshot.meta.judgeCount >= 5
-                  ? "Descarta el score mas alto y mas bajo."
-                  : "Promedia todos los jueces activos."}
+                Usa esta vista antes de iniciar el ring para crear el evento,
+                definir sede, jueces y ronda, y dejar lista la lista oficial de
+                salida.
               </p>
             </div>
 
-            <div className="control-bar">
-              <button className="primary-button" onClick={nextAthlete} type="button">
-                Siguiente atleta
-              </button>
-              <button className="ghost-button" onClick={resetRound} type="button">
-                Reiniciar score
-              </button>
-            </div>
-          </div>
-
-          <div className="judge-grid">
-            {snapshot.judges.map((judge) => (
-              <JudgePanel
-                key={judge.id}
-                actions={judgeActions}
-                isFocused={snapshot.focusedJudgeId === judge.id}
-                judge={judge}
-                onAction={applyAction}
-                onFocus={focusJudge}
-                onToggleConnection={toggleConnection}
+            <div className="setup-layout">
+              <EventWorkspacePanel
+                activeAthleteId={snapshot.activeAthleteId}
+                activeEventId={snapshot.eventId}
+                athletes={snapshot.athletes}
+                eventSummaries={eventSummaries}
+                meta={snapshot.meta}
+                onAddAthlete={addAthlete}
+                onCreateEvent={createEvent}
+                onRemoveAthlete={removeAthlete}
+                onSelectAthlete={selectAthlete}
+                onSelectEvent={selectEvent}
+                onUpdateMeta={updateEventMeta}
+                results={snapshot.results}
               />
-            ))}
-          </div>
-        </section>
+            </div>
+          </section>
+        ) : null}
 
-        <ResultPanel
-          athlete={activeAthlete}
-          judges={snapshot.judges}
-          onSaveResult={saveResult}
-          onSaveResultAndAdvance={saveResultAndAdvance}
-          result={publishedScore}
-          savedResult={activeResult}
-          standings={standings}
-        />
+        {activeTab === "judging" ? (
+          <JudgingWorkspacePanel
+            activeAthlete={activeAthlete}
+            activeAthleteId={snapshot.activeAthleteId}
+            athletes={snapshot.athletes}
+            focusedJudgeId={snapshot.focusedJudgeId}
+            judgeActions={judgeActions}
+            judges={snapshot.judges}
+            meta={snapshot.meta}
+            onApplyAction={applyAction}
+            onFocusJudge={focusJudge}
+            onNextAthlete={nextAthlete}
+            onResetRound={resetRound}
+            onSaveResult={saveResult}
+            onSaveResultAndAdvance={saveResultAndAdvance}
+            onSelectAthlete={selectAthlete}
+            onToggleConnection={toggleConnection}
+            publishedScore={publishedScore}
+            savedResult={activeResult}
+          />
+        ) : null}
+
+        {activeTab === "results" ? (
+          <EventResultsPanel
+            athlete={activeAthlete}
+            athleteCount={snapshot.athletes.length}
+            judges={snapshot.judges}
+            meta={snapshot.meta}
+            onSaveResult={saveResult}
+            onSaveResultAndAdvance={saveResultAndAdvance}
+            result={publishedScore}
+            savedResult={activeResult}
+            standings={standings}
+          />
+        ) : null}
       </main>
 
       <footer className="footer-strip">

@@ -27,9 +27,21 @@
   animation: fade-up 360ms ease-out both;
 }
 
+.topbar-copy {
+  display: grid;
+  gap: 0.2rem;
+  max-width: 54rem;
+}
+
 .topbar h1 {
   margin: 0.25rem 0 0;
   font-size: clamp(1.7rem, 3vw, 3rem);
+}
+
+.topbar-copy p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  max-width: 58ch;
 }
 
 .eyebrow {
@@ -50,6 +62,7 @@
 .status-pill {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.6rem;
   padding: 0.85rem 1rem;
   border: 1px solid var(--line);
@@ -84,6 +97,46 @@
   background: var(--danger);
 }
 
+.content-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.workspace-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.workspace-tab {
+  text-align: left;
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(19, 31, 38, 0.94), rgba(9, 16, 21, 0.96));
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.workspace-tab small {
+  color: var(--muted);
+}
+
+.workspace-tab.is-active,
+.workspace-tab:hover {
+  border-color: var(--line-strong);
+  background:
+    linear-gradient(135deg, rgba(255, 177, 63, 0.14), rgba(15, 26, 32, 0.96));
+  transform: translateY(-1px);
+}
+
 .main-grid {
   display: grid;
   grid-template-columns: 420px minmax(0, 1fr) 380px;
@@ -110,6 +163,137 @@
   display: grid;
   gap: 1rem;
   align-content: start;
+}
+
+.setup-layout {
+  display: grid;
+}
+
+.section-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.section-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.section-intro h2 {
+  margin: 0.3rem 0 0;
+  font-size: clamp(1.35rem, 2.6vw, 2.25rem);
+}
+
+.section-intro p {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--muted);
+}
+
+.landing-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.9fr);
+  gap: 1rem;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at top left, rgba(255, 177, 63, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(16, 27, 33, 0.94), rgba(8, 15, 20, 0.97));
+  box-shadow: var(--shadow);
+}
+
+.landing-copy,
+.landing-aside,
+.landing-card,
+.landing-metric-card {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.landing-copy h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.7rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+
+.landing-copy p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.landing-grid,
+.results-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.landing-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow);
+}
+
+.accent-card {
+  background:
+    linear-gradient(160deg, rgba(255, 177, 63, 0.16), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.03);
+}
+
+.landing-card h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.landing-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.landing-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.landing-metric-card {
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.landing-metric-card span {
+  color: var(--muted);
+}
+
+.landing-metric-card strong {
+  font-size: clamp(1.7rem, 3.2vw, 2.55rem);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.landing-steps {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  display: grid;
+  gap: 0.45rem;
 }
 
 .panel-heading {
@@ -318,6 +502,13 @@
   gap: 1rem;
 }
 
+.judging-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
+}
+
 .stage-shell {
   padding: 1.3rem;
   display: grid;
@@ -372,6 +563,35 @@
   margin-top: 0.8rem;
 }
 
+.scoring-side-panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.compact-hero {
+  gap: 0.9rem;
+}
+
+.quick-note-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.quick-note {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.quick-note p,
+.quick-note strong {
+  margin: 0;
+}
+
 .score-display,
 .result-score {
   font-size: clamp(3.8rem, 8vw, 6.6rem);
@@ -383,6 +603,10 @@
   display: flex;
   gap: 0.8rem;
   flex-wrap: wrap;
+}
+
+.control-bar > * {
+  flex: 1 1 12rem;
 }
 
 .primary-button,
@@ -539,6 +763,11 @@
   font-size: 0.92rem;
 }
 
+.results-layout {
+  display: grid;
+  gap: 1rem;
+}
+
 .standings-heading {
   margin-top: 1.2rem;
 }
@@ -573,6 +802,56 @@
   color: var(--muted);
 }
 
+.status-pill,
+.workspace-tab,
+.landing-card,
+.landing-metric-card,
+.event-chip,
+.roster-card,
+.queue-card,
+.judge-card,
+.result-row,
+.standings-row,
+.quick-note,
+.athlete-card,
+.scoreboard-card {
+  min-width: 0;
+}
+
+.topbar h1,
+.topbar-copy p,
+.status-pill span,
+.status-pill strong,
+.workspace-tab strong,
+.workspace-tab small,
+.landing-copy h2,
+.landing-copy p,
+.landing-card h3,
+.landing-card p,
+.landing-metric-card span,
+.landing-metric-card strong,
+.event-chip strong,
+.event-chip small,
+.event-chip span,
+.roster-main strong,
+.roster-main small,
+.queue-card strong,
+.queue-card small,
+.judge-title,
+.action-button,
+.athlete-card h2,
+.athlete-card p,
+.result-row strong,
+.result-row small,
+.standings-row strong,
+.standings-row small,
+.quick-note p,
+.quick-note strong,
+.section-intro h2,
+.section-intro p {
+  overflow-wrap: anywhere;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -587,6 +866,17 @@
 
 @media (max-width: 1200px) {
   .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-tabs,
+  .landing-grid,
+  .results-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landing-hero,
+  .judging-layout {
     grid-template-columns: 1fr;
   }
 
@@ -605,6 +895,10 @@
     padding: 0.85rem;
   }
 
+  .workspace-tabs,
+  .landing-grid,
+  .landing-metrics,
+  .results-summary-grid,
   .form-grid,
   .compact-grid,
   .roster-card,
@@ -618,6 +912,28 @@
   }
 
   .topbar {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .topbar-copy {
+    max-width: none;
+  }
+
+  .topbar h1 {
+    font-size: clamp(1.95rem, 9vw, 2.6rem);
+  }
+
+  .status-cluster {
+    width: 100%;
+    justify-content: start;
+  }
+
+  .status-pill {
+    flex: 1 1 12rem;
+  }
+
+  .section-intro {
     align-items: start;
   }
 

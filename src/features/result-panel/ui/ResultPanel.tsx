@@ -128,7 +128,7 @@ export function ResultPanel({
                 </strong>
                 <small>
                   {entry.poomsae}
-                  {entry.club ? ` · ${entry.club}` : ""}
+                  {entry.club ? ` - ${entry.club}` : ""}
                 </small>
               </div>
 
