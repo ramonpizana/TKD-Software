@@ -49,6 +49,8 @@ export interface StandingRow extends SavedResult {
   rankingPoints: number | null;
 }
 
+let entityIdSequence = 0;
+
 export function getActiveEvent(workspace: EventWorkspace): RingSnapshot {
   return (
     workspace.events.find((event) => event.eventId === workspace.activeEventId) ??
@@ -486,6 +488,34 @@ function normalizeJudgeCount(value: number): number {
 }
 
 function createEntityId(prefix: string): string {
-  const uuid = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
-  return `${prefix}-${uuid}`;
+  const cryptoApi = globalThis.crypto;
+
+  if (cryptoApi?.randomUUID) {
+    return `${prefix}-${cryptoApi.randomUUID()}`;
+  }
+
+  if (cryptoApi?.getRandomValues) {
+    const bytes = new Uint8Array(16);
+    cryptoApi.getRandomValues(bytes);
+
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+    return `${prefix}-${formatUuidFromBytes(bytes)}`;
+  }
+
+  entityIdSequence += 1;
+  return `${prefix}-${Date.now().toString(36)}-${entityIdSequence.toString(36)}`;
+}
+
+function formatUuidFromBytes(bytes: Uint8Array): string {
+  const hex = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    hex.slice(12, 16),
+    hex.slice(16, 20),
+    hex.slice(20)
+  ].join("-");
 }

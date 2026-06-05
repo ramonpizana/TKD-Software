@@ -49,7 +49,7 @@ advisories.push(
 
 if (desktopRuntime.pathAugmented) {
   advisories.push(
-    `Rust was found in the standard cargo bin at ${desktopRuntime.cargoBin} even though this shell PATH was stale. Reopen the terminal if you want to run rustc/cargo directly. Repo scripts already account for this.`
+    "Rust was found in the standard cargo bin even though this shell PATH was stale. Reopen the terminal if you want to run rustc/cargo directly. Repo scripts already account for this."
   );
 }
 
@@ -59,10 +59,8 @@ console.log(`Platform: ${platform}`);
 console.log(`Node: ${nodeVersion}`);
 console.log(`rustc: ${rustcVersion ?? "missing"}`);
 console.log(`cargo: ${cargoVersion ?? "missing"}`);
-console.log(
-  `Rust cargo bin: ${desktopRuntime.cargoBinExists ? desktopRuntime.cargoBin : "not detected"}`
-);
-console.log(`Cargo target dir: ${desktopRuntime.env.CARGO_TARGET_DIR}`);
+console.log(`Rust cargo bin: ${desktopRuntime.cargoBinExists ? "detected" : "not detected"}`);
+console.log(`Cargo target dir: ${desktopRuntime.env.CARGO_TARGET_DIR ? "configured" : "default"}`);
 console.log(`PATH auto-augmented: ${desktopRuntime.pathAugmented ? "yes" : "no"}`);
 console.log(`VS Build Tools marker: ${hasVsWhere ? "detected" : "not detected"}`);
 console.log();
