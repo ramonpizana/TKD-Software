@@ -1,22 +1,15 @@
-import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import os from "node:os";
-
-function readCommandOutput(command, args = ["--version"]) {
-  try {
-    return execFileSync(command, args, {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"]
-    }).trim();
-  } catch {
-    return null;
-  }
-}
+import {
+  readCommandOutput,
+  withDesktopToolchainEnv
+} from "./desktop-runtime.mjs";
 
 const platform = os.platform();
 const nodeVersion = process.version;
-const rustcVersion = readCommandOutput("rustc");
-const cargoVersion = readCommandOutput("cargo");
+const desktopRuntime = withDesktopToolchainEnv();
+const rustcVersion = readCommandOutput("rustc", ["--version"], desktopRuntime.env);
+const cargoVersion = readCommandOutput("cargo", ["--version"], desktopRuntime.env);
 const buildToolsMarkerPaths = [
   "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
   "C:\\Program Files\\Microsoft Visual Studio\\Installer\\vswhere.exe"
@@ -54,12 +47,21 @@ advisories.push(
   "WebView2 is usually already present on Windows 10 1803+ and Windows 11. If Tauri later complains about WebView2, install the Evergreen runtime."
 );
 
+if (desktopRuntime.pathAugmented) {
+  advisories.push(
+    "Rust was found in the standard cargo bin even though this shell PATH was stale. Reopen the terminal if you want to run rustc/cargo directly. Repo scripts already account for this."
+  );
+}
+
 console.log("TKD-Software desktop doctor");
 console.log("---------------------------");
 console.log(`Platform: ${platform}`);
 console.log(`Node: ${nodeVersion}`);
 console.log(`rustc: ${rustcVersion ?? "missing"}`);
 console.log(`cargo: ${cargoVersion ?? "missing"}`);
+console.log(`Rust cargo bin: ${desktopRuntime.cargoBinExists ? "detected" : "not detected"}`);
+console.log(`Cargo target dir: ${desktopRuntime.env.CARGO_TARGET_DIR ? "configured" : "default"}`);
+console.log(`PATH auto-augmented: ${desktopRuntime.pathAugmented ? "yes" : "no"}`);
 console.log(`VS Build Tools marker: ${hasVsWhere ? "detected" : "not detected"}`);
 console.log();
 

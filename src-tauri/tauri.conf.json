@@ -4,9 +4,10 @@
   "identifier": "com.ramonpizana.tkdsoftware",
   "build": {
     "beforeBuildCommand": "npm run build",
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "node scripts/tauri-before-dev.mjs",
     "devUrl": "http://127.0.0.1:5173",
-    "frontendDist": "../dist"
+    "frontendDist": "../dist",
+    "removeUnusedCommands": false
   },
   "app": {
     "security": {
@@ -26,7 +27,19 @@
   },
   "bundle": {
     "active": true,
-    "targets": "nsis"
+    "targets": "nsis",
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "displayLanguageSelector": true
+      }
+    }
   },
-  "plugins": {}
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:tkd-software.db"]
+    }
+  }
 }

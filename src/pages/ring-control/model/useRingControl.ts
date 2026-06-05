@@ -1,29 +1,95 @@
-import { useEffect, useState } from "react";
-import { loadSnapshot, saveSnapshot } from "../../../domain/ring/model/persistence";
+import { useEffect, useRef, useState } from "react";
 import {
+  addAthlete,
   advanceAthlete,
   applyActionToJudge,
   applyFocusedKeyboardAction,
+  type AthleteDraft,
+  buildStandings,
+  createEvent,
   focusJudge,
+  getActiveEvent,
+  removeAthlete,
   resetRound,
+  saveCurrentResult,
+  saveCurrentResultAndAdvance,
   selectAthlete,
-  toggleJudgeConnectionState
-} from "../../../domain/ring/model/ring-state";
+  selectEvent,
+  toggleJudgeConnectionState,
+  updateEventMeta
+} from "../../../domain/tournament/model/workspace-state";
 import {
   calculatePublishedScore,
   judgeActionCatalog
 } from "../../../domain/ring/model/scoring";
-import type { RingSnapshot } from "../../../domain/ring/model/schemas";
+import {
+  createDefaultWorkspace,
+  getInitialStorageDiagnostics,
+  loadWorkspaceForRuntime,
+  saveWorkspaceForRuntime
+} from "../../../domain/tournament/model/persistence.runtime";
 import { demoSnapshot } from "../../../domain/tournament/fixtures/demoSnapshot";
+import type { TournamentMeta } from "../../../domain/ring/model/schemas";
 
 export function useRingControl() {
-  const [snapshot, setSnapshot] = useState<RingSnapshot>(() =>
-    loadSnapshot(demoSnapshot)
+  const [workspace, setWorkspace] = useState(() =>
+    createDefaultWorkspace(demoSnapshot)
   );
+  const [storage, setStorage] = useState(getInitialStorageDiagnostics);
+  const [isStorageHydrated, setIsStorageHydrated] = useState(false);
+  const storageRef = useRef(storage);
+  const snapshot = getActiveEvent(workspace);
 
   useEffect(() => {
-    saveSnapshot(snapshot);
-  }, [snapshot]);
+    storageRef.current = storage;
+  }, [storage]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void loadWorkspaceForRuntime(demoSnapshot)
+      .then((result) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setWorkspace(result.workspace);
+        setStorage(result.diagnostics);
+        setIsStorageHydrated(true);
+      })
+      .catch((error) => {
+        console.error("Failed to hydrate workspace runtime storage", error);
+        setIsStorageHydrated(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isStorageHydrated) {
+      return;
+    }
+
+    let isMounted = true;
+
+    void saveWorkspaceForRuntime(workspace, storageRef.current)
+      .then((nextDiagnostics) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setStorage(nextDiagnostics);
+      })
+      .catch((error) => {
+        console.error("Failed to persist workspace runtime storage", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isStorageHydrated, workspace]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -31,7 +97,15 @@ export function useRingControl() {
         return;
       }
 
-      setSnapshot((current) => applyFocusedKeyboardAction(current, event.key));
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)
+      ) {
+        return;
+      }
+
+      setWorkspace((current) => applyFocusedKeyboardAction(current, event.key));
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -45,18 +119,37 @@ export function useRingControl() {
     snapshot.judges,
     snapshot.meta.judgeCount
   );
+  const standings = buildStandings(snapshot);
+  const activeResult = snapshot.results.find(
+    (result) => result.athleteId === snapshot.activeAthleteId
+  );
+  const eventSummaries = workspace.events.map((event) => ({
+    eventId: event.eventId,
+    eventName: event.meta.eventName,
+    roundName: event.meta.roundName,
+    categoryLabel: event.meta.categoryLabel,
+    athleteCount: event.athletes.length,
+    resultCount: event.results.length,
+    status: event.meta.status
+  }));
 
   return {
+    workspace,
     snapshot,
     activeAthlete,
+    activeResult,
+    standings,
+    eventSummaries,
+    storage,
+    isStorageHydrated,
     publishedScore,
     judgeActions: judgeActionCatalog,
     selectAthlete: (athleteId: string) =>
-      setSnapshot((current) => selectAthlete(current, athleteId)),
+      setWorkspace((current) => selectAthlete(current, athleteId)),
     focusJudge: (judgeId: string) =>
-      setSnapshot((current) => focusJudge(current, judgeId)),
+      setWorkspace((current) => focusJudge(current, judgeId)),
     applyAction: (judgeId: string, actionId: string) =>
-      setSnapshot((current) => {
+      setWorkspace((current) => {
         const action = judgeActionCatalog.find((entry) => entry.id === actionId);
 
         if (!action) {
@@ -66,9 +159,21 @@ export function useRingControl() {
         return applyActionToJudge(current, judgeId, action);
       }),
     toggleConnection: (judgeId: string) =>
-      setSnapshot((current) => toggleJudgeConnectionState(current, judgeId)),
-    resetRound: () => setSnapshot((current) => resetRound(current)),
-    nextAthlete: () => setSnapshot((current) => advanceAthlete(current))
+      setWorkspace((current) => toggleJudgeConnectionState(current, judgeId)),
+    resetRound: () => setWorkspace((current) => resetRound(current)),
+    nextAthlete: () => setWorkspace((current) => advanceAthlete(current)),
+    saveResult: () => setWorkspace((current) => saveCurrentResult(current)),
+    saveResultAndAdvance: () =>
+      setWorkspace((current) => saveCurrentResultAndAdvance(current)),
+    createEvent: () => setWorkspace((current) => createEvent(current)),
+    selectEvent: (eventId: string) =>
+      setWorkspace((current) => selectEvent(current, eventId)),
+    updateEventMeta: (updates: Partial<TournamentMeta>) =>
+      setWorkspace((current) => updateEventMeta(current, updates)),
+    addAthlete: (draft: AthleteDraft) =>
+      setWorkspace((current) => addAthlete(current, draft)),
+    removeAthlete: (athleteId: string) =>
+      setWorkspace((current) => removeAthlete(current, athleteId))
   };
 }
 

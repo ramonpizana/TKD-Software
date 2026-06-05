@@ -33,5 +33,5 @@ de taekwondo poomsae que sea rapido, entendible y resiliente ante fallas de red.
 <!-- SPECKIT START -->
 ## Feature activo
 
-- plan actual: `specs/002-desktop-shell-foundation/plan.md`
+- plan actual: `specs/005-desktop-distribution/plan.md`
 <!-- SPECKIT END -->

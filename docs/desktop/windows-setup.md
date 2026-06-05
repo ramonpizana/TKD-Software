@@ -26,6 +26,15 @@ winget install --id Rustlang.Rustup
 
 Luego cierra y vuelve a abrir la terminal.
 
+Si `rustup`, `rustc` o `cargo` aun no aparecen en esa misma ventana, abre una
+nueva terminal o usa la ruta completa una vez:
+
+```powershell
+& "$env:USERPROFILE\\.cargo\\bin\\rustup.exe" default stable-msvc
+& "$env:USERPROFILE\\.cargo\\bin\\rustc.exe" --version
+& "$env:USERPROFILE\\.cargo\\bin\\cargo.exe" --version
+```
+
 Verifica:
 
 ```powershell
@@ -40,7 +49,13 @@ instalado. Si tu equipo no lo tiene, instala el runtime de WebView2.
 
 ## Paso 4. Revisar el repo
 
-Desde la raiz del proyecto:
+Entra a la raiz del proyecto:
+
+```powershell
+Set-Location C:\\Users\\ramon\\Documents\\TKD
+```
+
+Luego corre:
 
 ```powershell
 npm install

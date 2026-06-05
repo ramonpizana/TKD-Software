@@ -2,5 +2,9 @@
   "identifier": "main-capability",
   "description": "Capability for the main ring host window.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    "sql:default",
+    "sql:allow-execute"
+  ]
 }

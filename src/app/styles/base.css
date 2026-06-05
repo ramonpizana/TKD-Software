@@ -25,6 +25,25 @@ select {
   font: inherit;
 }
 
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 0.75rem 0.9rem;
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--line-strong);
+  box-shadow: 0 0 0 1px rgba(255, 177, 63, 0.22);
+}
+
 button {
   cursor: pointer;
 }
