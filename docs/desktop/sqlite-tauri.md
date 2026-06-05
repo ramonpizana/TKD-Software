@@ -1,35 +1,109 @@
 # SQLite local con Tauri
 
-## Objetivo
+## Que significa en este proyecto
 
-Mover la persistencia del host del ring desde `localStorage` hacia una base
-local transaccional dentro de `Tauri`, manteniendo el flujo `offline-first`.
+`Tauri` es el shell de escritorio. `SQLite` es la base de datos local embebida.
+No es una plataforma externa ni requiere cuenta, servidor o internet.
 
-## Estado actual del proyecto
+Cuando `TKD-Software` corre dentro de `Tauri`, la intencion es que el workspace
+del torneo viva en un archivo local `.db` del equipo del ring. Cuando corre en
+modo web, el fallback sigue siendo `localStorage`.
 
-Hoy la app guarda el workspace de eventos en:
+## Estado actual del repo
 
+Hoy el repositorio ya tiene:
+
+- plugin oficial de SQL instalado
+- migracion inicial registrada en `Rust`
+- fachada de persistencia runtime-aware
+- diagnostico visible en la UI para saber que storage esta activo
+
+Archivos clave:
+
+- [src/domain/tournament/model/persistence.runtime.ts](/C:/Users/ramon/Documents/TKD/src/domain/tournament/model/persistence.runtime.ts)
+- [src/domain/tournament/model/persistence.tauri-sql.ts](/C:/Users/ramon/Documents/TKD/src/domain/tournament/model/persistence.tauri-sql.ts)
 - [src/domain/tournament/model/persistence.ts](/C:/Users/ramon/Documents/TKD/src/domain/tournament/model/persistence.ts)
+- [src-tauri/src/lib.rs](/C:/Users/ramon/Documents/TKD/src-tauri/src/lib.rs)
+- [src-tauri/tauri.conf.json](/C:/Users/ramon/Documents/TKD/src-tauri/tauri.conf.json)
 
-Ese archivo usa `localStorage`, lo cual es util para el prototipo web, pero no
-es la solucion final para un host de ring en competencia.
+## Donde queda guardada la informacion
 
-## La ruta recomendada
+La app usa:
 
-1. Mantener `localStorage` solo como fallback web.
-2. Preparar el shell `Tauri` con el plugin oficial de SQL.
-3. Crear una capa de almacenamiento para que la UI no dependa del motor.
-4. Migrar eventos, atletas y resultados a `SQLite`.
-5. Conservar migraciones versionadas para no romper torneos ya guardados.
+- `Web`: `localStorage` del navegador o webview
+- `Desktop Tauri`: `sqlite:tkd-software.db`
 
-## Paso 1. Instalar el plugin oficial
+La documentacion oficial de Tauri indica que la ruta `sqlite:...` es relativa
+al directorio `AppConfig`. Con el identificador actual del proyecto
+`com.ramonpizana.tkdsoftware`, en Windows la ruta esperada del archivo local es:
 
-Referencia oficial de Tauri:
+```text
+C:\Users\<tu-usuario>\AppData\Roaming\com.ramonpizana.tkdsoftware\tkd-software.db
+```
 
-- [Tauri SQL plugin](https://v2.tauri.app/fr/plugin/sql/)
-- [Tauri SQL JavaScript reference](https://v2.tauri.app/es/reference/javascript/sql/)
+En la UI de la portada ahora se muestra el storage activo y la ubicacion
+esperada para que no tengas que adivinarlo.
 
-Desde la raiz del repo:
+## Como confirmar que esta usando SQLite
+
+1. Arranca la app en desktop con:
+
+```bash
+npm run desktop:dev
+```
+
+2. En `Inicio`, revisa la tarjeta `Storage activo`.
+3. Si el shell desktop arranco bien, deberia decir `SQLite local`.
+4. Si el shell no pudo usar SQLite, veras un estado de `Fallback`.
+
+## Que guarda hoy
+
+La migracion inicial crea una tabla minima para snapshot del workspace:
+
+- `workspace_state`
+
+Por ahora el sistema guarda el workspace completo del torneo como snapshot
+serializado. Eso incluye:
+
+- eventos
+- atletas
+- jueces
+- resultados
+
+Esto deja lista una persistencia local real sin obligarnos todavia a normalizar
+todo en tablas separadas.
+
+## Migracion inicial
+
+La migracion se registra en:
+
+- [src-tauri/src/lib.rs](/C:/Users/ramon/Documents/TKD/src-tauri/src/lib.rs)
+
+Y crea:
+
+```sql
+CREATE TABLE IF NOT EXISTS workspace_state (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  version INTEGER NOT NULL,
+  payload TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+```
+
+## Fallback y migracion inicial
+
+La estrategia actual es:
+
+1. si corre en web, usa `localStorage`
+2. si corre en desktop, intenta usar `SQLite`
+3. si `SQLite` esta vacio y existe un workspace previo en `localStorage`,
+   migra ese snapshot a la base local
+4. si `SQLite` falla durante desarrollo, la app cae a `localStorage` con
+   mensaje de diagnostico
+
+## Setup minimo
+
+Desde la raiz:
 
 ```bash
 npm install @tauri-apps/plugin-sql
@@ -41,119 +115,20 @@ Desde `src-tauri/`:
 cargo add tauri-plugin-sql --features sqlite
 ```
 
-La documentacion oficial indica que tambien puede hacerse con `npm run tauri add sql`,
-pero para este repo es mas claro controlar cada paso manualmente.
-
-## Paso 2. Registrar el plugin en Rust
-
-En [src-tauri/src/lib.rs](/C:/Users/ramon/Documents/TKD/src-tauri/src/lib.rs)
-agrega el plugin:
-
-```rust
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_sql::Builder::default().build())
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-}
-```
-
-## Paso 3. Abrir permisos del capability
-
-La guia oficial de Tauri explica que por defecto los comandos peligrosos del
-plugin quedan bloqueados y se habilitan desde `capabilities`.
-
-En [src-tauri/capabilities/default.json](/C:/Users/ramon/Documents/TKD/src-tauri/capabilities/default.json)
-la base minima recomendada es:
-
-```json
-{
-  "identifier": "main-capability",
-  "description": "Capability for the main ring host window.",
-  "windows": ["main"],
-  "permissions": [
-    "core:default",
-    "sql:default",
-    "sql:allow-execute"
-  ]
-}
-```
-
-`sql:default` ya incluye `load`, `close` y `select`. Solo agregamos
-`sql:allow-execute` para escrituras.
-
-## Paso 4. Crear el archivo de base local
-
-La documentacion oficial indica que la ruta de SQLite debe empezar con
-`sqlite:` y es relativa al directorio de app.
-
-Ejemplo:
-
-```ts
-import Database from "@tauri-apps/plugin-sql";
-
-const db = await Database.load("sqlite:tkd-software.db");
-```
-
-## Paso 5. Agregar migraciones
-
-Tauri SQL soporta migraciones versionadas. Para este proyecto conviene crear al
-menos:
-
-1. tabla `events`
-2. tabla `athletes`
-3. tabla `saved_results`
-4. tabla `judge_breakdown`
-5. indices por `event_id`, `athlete_id` y `saved_at`
-
-La propia documentacion de Tauri recomienda que las migraciones:
-
-- tengan version unica
-- sean seguras al re-ejecutarse
-- se prueben antes de usarse en datos reales
-
-## Paso 6. Separar la capa de almacenamiento
-
-Antes de migrar el hook principal, la estructura recomendada es esta:
-
-```text
-src/domain/tournament/model/
-|- persistence.ts              # facade
-|- persistence.local.ts        # fallback web con localStorage
-`- persistence.tauri-sql.ts    # host desktop con SQLite
-```
-
-La UI seguiria llamando a una sola interfaz de almacenamiento, mientras la
-implementacion decide si corre en web o en `Tauri`.
-
-## Paso 7. Migracion segura en este proyecto
-
-El orden practico que yo recomiendo para `TKD-Software` es:
-
-1. dejar instalado el plugin
-2. crear el schema inicial de SQLite
-3. leer y escribir un evento demo desde `Tauri`
-4. migrar solo `EventWorkspace`
-5. despues migrar bitacora de jueces y auditoria detallada
-
-## Lo que necesito de tu lado cuando quieras que lo implemente
-
-1. Confirmar que quieres que ya integremos el plugin en `src-tauri/`
-2. Tener `rustc` y `cargo` funcionando en una terminal abierta desde el repo
-3. Poder correr:
+## Verificaciones utiles
 
 ```bash
 npm run desktop:doctor
 npm run desktop:dev
 ```
 
-## Lo que sigue despues
+Si `desktop:dev` falla antes de abrir ventana, el problema no es la base de
+datos; es el shell desktop o su pipeline de build.
 
-Cuando me digas que procedamos, el siguiente sprint ideal es:
+## Limites de esta fase
 
-1. instalar el plugin en el repo
-2. registrar permisos y builder
-3. crear migracion `v1`
-4. mover `EventWorkspace` a `SQLite`
-5. dejar `localStorage` solo para la version web
+- El desktop shell de Windows sigue sensible al bug actual de Tauri ACL si el
+  ecosistema vuelve a romper el build.
+- El modelo aun no normaliza eventos, atletas y resultados en tablas separadas.
+- La siguiente fase natural es abrir tablas de auditoria y consultas directas
+  por atleta, evento y desglose de jueces.

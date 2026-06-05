@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   addAthlete,
   advanceAthlete,
@@ -23,19 +23,73 @@ import {
   judgeActionCatalog
 } from "../../../domain/ring/model/scoring";
 import {
-  loadWorkspace,
-  saveWorkspace
-} from "../../../domain/tournament/model/persistence";
+  createDefaultWorkspace,
+  getInitialStorageDiagnostics,
+  loadWorkspaceForRuntime,
+  saveWorkspaceForRuntime
+} from "../../../domain/tournament/model/persistence.runtime";
 import { demoSnapshot } from "../../../domain/tournament/fixtures/demoSnapshot";
 import type { TournamentMeta } from "../../../domain/ring/model/schemas";
 
 export function useRingControl() {
-  const [workspace, setWorkspace] = useState(() => loadWorkspace(demoSnapshot));
+  const [workspace, setWorkspace] = useState(() =>
+    createDefaultWorkspace(demoSnapshot)
+  );
+  const [storage, setStorage] = useState(getInitialStorageDiagnostics);
+  const [isStorageHydrated, setIsStorageHydrated] = useState(false);
+  const storageRef = useRef(storage);
   const snapshot = getActiveEvent(workspace);
 
   useEffect(() => {
-    saveWorkspace(workspace);
-  }, [workspace]);
+    storageRef.current = storage;
+  }, [storage]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void loadWorkspaceForRuntime(demoSnapshot)
+      .then((result) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setWorkspace(result.workspace);
+        setStorage(result.diagnostics);
+        setIsStorageHydrated(true);
+      })
+      .catch((error) => {
+        console.error("Failed to hydrate workspace runtime storage", error);
+        setIsStorageHydrated(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isStorageHydrated) {
+      return;
+    }
+
+    let isMounted = true;
+
+    void saveWorkspaceForRuntime(workspace, storageRef.current)
+      .then((nextDiagnostics) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setStorage(nextDiagnostics);
+      })
+      .catch((error) => {
+        console.error("Failed to persist workspace runtime storage", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isStorageHydrated, workspace]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -86,6 +140,8 @@ export function useRingControl() {
     activeResult,
     standings,
     eventSummaries,
+    storage,
+    isStorageHydrated,
     publishedScore,
     judgeActions: judgeActionCatalog,
     selectAthlete: (athleteId: string) =>

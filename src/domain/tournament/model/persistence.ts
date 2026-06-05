@@ -7,8 +7,10 @@ import {
   type RingSnapshot
 } from "../../ring/model/schemas";
 
-const WORKSPACE_STORAGE_KEY = "tkd-software:event-workspace:v1";
+export const WORKSPACE_STORAGE_KEY = "tkd-software:event-workspace:v1";
 const LEGACY_RING_STORAGE_KEY = "tkd-software:ring-foundation:v1";
+export const LOCAL_STORAGE_LABEL = "Browser localStorage";
+export const LOCAL_STORAGE_LOCATION = "Perfil local del navegador o webview";
 
 export function createWorkspaceFromEvent(event: RingSnapshot): EventWorkspace {
   return {
@@ -54,6 +56,14 @@ export function saveWorkspace(workspace: EventWorkspace): void {
   }
 
   window.localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(workspace));
+}
+
+export function hasPersistedWorkspace(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.localStorage.getItem(WORKSPACE_STORAGE_KEY) !== null;
 }
 
 function migrateLegacySnapshot(

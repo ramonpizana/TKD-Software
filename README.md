@@ -14,6 +14,7 @@ internet del recinto.
 - workspace local de eventos con multiples brackets y eventos activos
 - registro de atletas con datos competitivos, siembra y ranking opcional
 - guardado persistente de resultados por atleta y tabla de posiciones
+- fachada de persistencia local que usa `SQLite` en `Tauri` y `localStorage` como fallback web
 - navegacion separada para inicio, creacion de evento, jueceo y seguimiento del evento
 - motor de puntuacion probado con reglas de descarte y deducciones
 - persistencia local para modo offline
@@ -162,6 +163,20 @@ Cuando pasemos a despliegue real, las cuentas que conviene preparar son:
 
 La base actual ya cubre el scoring del ring, el registro manual previo de
 atletas, la gestion local de eventos y el guardado de resultados con tabla de
-posiciones. La siguiente ola natural es meter draws o ramas eliminatorias,
-importacion masiva de atletas, sincronizacion entre rings y persistencia local
-de escritorio mas fuerte sobre SQLite dentro de Tauri.
+ posiciones. La persistencia del runtime ya esta encaminada para usar `SQLite`
+ en `Tauri` y `localStorage` en web. La siguiente ola natural es meter draws o
+ ramas eliminatorias, importacion masiva de atletas y sincronizacion entre
+ rings.
+
+## Distribucion desktop
+
+Para compartir una app real sin `localhost`, revisa:
+
+- [docs/desktop/distribution.md](/C:/Users/ramon/Documents/TKD/docs/desktop/distribution.md)
+
+Resumen rapido:
+
+- `npm run desktop:build` genera el instalador de Windows
+- `npm run desktop:artifacts` te dice donde quedo el `.exe`
+- `.github/workflows/desktop-release.yml` compila desde GitHub y sube artifacts
+- un usuario final debe instalar el `-setup.exe`, no correr `localhost`

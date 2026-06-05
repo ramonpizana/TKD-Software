@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  cacheDir: "node_modules/.vite-temp/vite-cache",
+  cacheDir: process.env.TKD_VITE_CACHE_DIR ?? "node_modules/.vite-temp/vite-cache",
   plugins: [react()],
   server: {
     host: "127.0.0.1",

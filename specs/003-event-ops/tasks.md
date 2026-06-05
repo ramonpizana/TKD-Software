@@ -36,5 +36,5 @@
 ## Final Phase: Polish
 
 - [x] T016 Actualizar `README.md`, `ARCHITECTURE.md` y guias de escritorio
-- [ ] T017 Documentar e integrar la ruta inicial a `SQLite` en `Tauri`
+- [x] T017 Documentar e integrar la ruta inicial a `SQLite` en `Tauri`
 - [x] T018 Ejecutar `npm run validate` y revisar la UI local

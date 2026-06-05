@@ -1,17 +1,20 @@
 import type { TournamentMeta } from "../../../domain/ring/model/schemas";
+import type { WorkspaceStorageDiagnostics } from "../../../domain/tournament/model/storage-diagnostics";
 
 interface ProductHomePanelProps {
   eventCount: number;
   athleteCount: number;
   resultCount: number;
   meta: TournamentMeta;
+  storage: WorkspaceStorageDiagnostics;
 }
 
 export function ProductHomePanel({
   eventCount,
   athleteCount,
   resultCount,
-  meta
+  meta,
+  storage
 }: ProductHomePanelProps) {
   return (
     <section className="landing-shell">
@@ -85,14 +88,34 @@ export function ProductHomePanel({
 
         <article className="landing-card">
           <span className="eyebrow">Proximo enfoque</span>
-          <h3>Ramas y persistencia fuerte</h3>
+          <h3>Ramas y operacion multi-ring</h3>
           <p>
             Las siguientes fases naturales son generar llaves de eliminacion,
-            manejar clasificados y mover la persistencia local a SQLite dentro del
-            shell desktop.
+            manejar clasificados y conectar remotos de jueces sin comprometer la
+            fuente de verdad local del ring.
+          </p>
+        </article>
+
+        <article className="landing-card">
+          <span className="eyebrow">Storage activo</span>
+          <h3>{storage.label}</h3>
+          <p>{storage.message}</p>
+          <p className="storage-location">{storage.location}</p>
+          <p className="storage-meta">
+            Ultima carga: {formatTimestamp(storage.lastLoadedAt)}
+            {" · "}
+            Ultimo guardado: {formatTimestamp(storage.lastSavedAt)}
           </p>
         </article>
       </div>
     </section>
   );
+}
+
+function formatTimestamp(value: string | null) {
+  if (!value) {
+    return "pendiente";
+  }
+
+  return new Date(value).toLocaleString("es-MX");
 }

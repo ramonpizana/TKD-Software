@@ -62,6 +62,7 @@ console.log(`cargo: ${cargoVersion ?? "missing"}`);
 console.log(
   `Rust cargo bin: ${desktopRuntime.cargoBinExists ? desktopRuntime.cargoBin : "not detected"}`
 );
+console.log(`Cargo target dir: ${desktopRuntime.env.CARGO_TARGET_DIR}`);
 console.log(`PATH auto-augmented: ${desktopRuntime.pathAugmented ? "yes" : "no"}`);
 console.log(`VS Build Tools marker: ${hasVsWhere ? "detected" : "not detected"}`);
 console.log();

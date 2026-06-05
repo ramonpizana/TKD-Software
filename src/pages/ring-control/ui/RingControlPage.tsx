@@ -32,6 +32,7 @@ export function RingControlPage() {
     selectEvent,
     snapshot,
     standings,
+    storage,
     toggleConnection,
     updateEventMeta
   } = useRingControl();
@@ -77,6 +78,10 @@ export function RingControlPage() {
             <span>{snapshot.meta.roundName}</span>
             <strong>{snapshot.meta.categoryLabel}</strong>
           </div>
+          <div className={`status-pill${storage.status === "fallback" ? " status-pill-warning" : ""}`}>
+            <span>{storage.label}</span>
+            <strong>{storage.status === "fallback" ? "Fallback" : "Listo"}</strong>
+          </div>
         </div>
       </header>
 
@@ -89,6 +94,7 @@ export function RingControlPage() {
             eventCount={eventSummaries.length}
             meta={snapshot.meta}
             resultCount={resultCount}
+            storage={storage}
           />
         ) : null}
 
@@ -169,6 +175,7 @@ export function RingControlPage() {
           Runtime: {runtime.shell}
           {runtime.appVersion ? ` ${runtime.appVersion}` : ""}
         </span>
+        <span>Storage: {storage.label}</span>
         <span>
           Ultima actualizacion:{" "}
           {new Date(snapshot.meta.updatedAt).toLocaleTimeString("es-MX")}

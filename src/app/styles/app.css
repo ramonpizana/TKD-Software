@@ -75,6 +75,11 @@
   color: var(--text);
 }
 
+.status-pill-warning {
+  border-color: rgba(255, 177, 63, 0.3);
+  background: rgba(255, 177, 63, 0.08);
+}
+
 .status-led,
 .connection-dot {
   width: 0.6rem;
@@ -262,6 +267,11 @@
 .landing-card p {
   margin: 0;
   color: var(--muted);
+}
+
+.storage-location,
+.storage-meta {
+  font-size: 0.92rem;
 }
 
 .landing-metrics {
