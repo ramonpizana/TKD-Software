@@ -2,7 +2,13 @@ import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import path from "node:path";
 
-const distDir = path.join(process.cwd(), "dist");
+const outDirFlagIndex = process.argv.indexOf("--out-dir");
+const requestedOutDir =
+  outDirFlagIndex >= 0 ? process.argv[outDirFlagIndex + 1] : undefined;
+const distDir = path.join(
+  process.cwd(),
+  requestedOutDir || process.env.TKD_BUILD_OUT_DIR || "dist"
+);
 
 if (process.platform === "win32") {
   const escapedPath = distDir.replace(/'/g, "''");

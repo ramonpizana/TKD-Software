@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "identifier": "com.ramonpizana.tkdsoftware",
   "build": {
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "node scripts/ensure-desktop-dist.mjs",
     "beforeDevCommand": "node scripts/tauri-before-dev.mjs",
     "devUrl": "http://127.0.0.1:5173",
-    "frontendDist": "../dist",
+    "frontendDist": "../dist-desktop",
     "removeUnusedCommands": false
   },
   "app": {
