@@ -21,6 +21,19 @@ npm run desktop:build
 Tauri deja de depender de `http://127.0.0.1:5173/` y empaqueta la app web ya
 compilada dentro del ejecutable o instalador de Windows.
 
+El flujo de build verificado en este repo tambien puede ejecutarse de forma
+directa con:
+
+```bash
+node scripts/desktop-build.mjs
+```
+
+Ese comando hace tres cosas:
+
+- revisa prerequisitos
+- construye `dist-desktop`
+- empaqueta el `.exe` y el instalador NSIS
+
 Para el usuario final eso significa:
 
 - no necesita Node
@@ -60,6 +73,10 @@ La salida local por defecto queda bajo:
 
 `%LOCALAPPDATA%\tkd-software-target\release\bundle\nsis\`
 
+El ejecutable release directo queda en:
+
+`%LOCALAPPDATA%\tkd-software-target\release\tkd-software.exe`
+
 ## Flujo con GitHub
 
 El repositorio incluye el workflow:
@@ -91,6 +108,12 @@ Ese workflow permite:
 El repo ya intenta cerrar procesos viejos del host de desarrollo antes de
 compilar. Si aun asi algo queda atorado, cierra cualquier ventana `TKD-Software`
 abierta y vuelve a correr el comando.
+
+Si quieres evitar cualquier duda, usa primero:
+
+```powershell
+Get-Process tkd-software -ErrorAction SilentlyContinue | Stop-Process -Force
+```
 
 ### Si no quieres depender del internet al instalar
 

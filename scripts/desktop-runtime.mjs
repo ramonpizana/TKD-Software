@@ -77,6 +77,14 @@ export function stopWindowsDesktopHostProcesses(processName, executableRootPath)
       stdio: ["ignore", "ignore", "ignore"]
     });
   } catch {
+    // Continue to the broader taskkill fallback below.
+  }
+
+  try {
+    execFileSync("taskkill", ["/IM", processName, "/T", "/F"], {
+      stdio: ["ignore", "ignore", "ignore"]
+    });
+  } catch {
     // Best-effort cleanup only.
   }
 }

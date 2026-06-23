@@ -74,6 +74,19 @@ npm run desktop:dev
 npm run desktop:build
 ```
 
+Si quieres usar el flujo ya verificado paso a paso sin depender del wrapper de
+`npm`, tambien puedes correr:
+
+```powershell
+node scripts/desktop-build.mjs
+```
+
+Al terminar, el instalador queda normalmente en:
+
+```text
+C:\Users\ramon\AppData\Local\tkd-software-target\release\bundle\nsis\TKD-Software_0.1.0_x64-setup.exe
+```
+
 ## Notas
 
 - Esta fase usa `NSIS` como target inicial de Windows.
